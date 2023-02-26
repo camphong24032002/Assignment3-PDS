@@ -62,6 +62,40 @@ tree_pipeline = Pipeline(steps=[
 tree_pipeline
 ```
 
+## K-Means
+- The K-means algorithm clusters data by attempting to divide it into n groups of equal variance.
+- The K-means algorithm seeks centroids with the lowest inertia, or within-cluster sum-of-squares criterion:
+
+```
+for n_clusters in clusters_size:
+    best_score, best_init = 0 , 0
+    for n_init in init_size:
+        kmeans = KMeans(n_clusters = n_clusters, n_init=n_init)
+        kmeans.fit(matrix)
+        silhouette_avg = silhouette_score(matrix_test, kmeans.predict(matrix_test))*100
+        train_avg =  silhouette_score(matrix, kmeans.predict(matrix))*100
+        test_scores.append(silhouette_avg)
+        train_scores.append(train_avg)
+        if (silhouette_avg>best_score):
+            best_score, best_init = silhouette_avg, n_init
+    print(f'For n_clusters = {n_clusters}, and n_init = {best_init}, the average silhouette_score is: {round(silhouette_avg, 5)}')
+```
+
+
+## Hierarchical clustering
+- Hierarchical clustering is a broad class of clustering algorithms that create nested clusters by successively merging or splitting them. A tree is used to represent the cluster hierarchy.
+- The AgglomerativeClustering object uses a bottom-up approach to perform hierarchical clustering: each observation begins in its own cluster, and clusters are successively merged together.
+
+```
+matrix = train_X_df[['Informational_Duration', 'PageValues']].copy()
+for n_clusters in range(2,8):
+    model = AgglomerativeClustering(n_clusters = n_clusters)
+    clusters = model.fit_predict(matrix)
+    silhouette_avg = silhouette_score(matrix, clusters)*100
+    print(f'For n_clusters = {n_clusters}, the average silhouette_score is : {silhouette_avg.round(3)}')
+```
+
+
 ## Innovative Model
 - Following some investigation, we discovered that the Grid Search CV is a practical way to enhance a model for greater accuracy and better parameters.
 - GridSearchCV is a method for adjusting hyperparameters to find the best values for a particular model. The value of a model's hyperparameters has a substantial impact on its performance.
